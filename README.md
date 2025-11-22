@@ -13,15 +13,15 @@ I'm super excited to share VidSnapAi, my first Python-based project, where I bui
 📁 One-Time Processing – Ensures each upload is converted only once
 
 ## How It Works:
-Users upload images + enter text
+-Users upload images + enter text
 
-Flask stores everything in a unique folder
+-Flask stores everything in a unique folder
 
-Text is converted to audio via ElevenLabs
+-Text is converted to audio via ElevenLabs
 
-FFmpeg creates a reel by stitching images + voice
+-FFmpeg creates a reel by stitching images + voice
 
-Output is saved and shown in the gallery
+-Output is saved and shown in the gallery
 
 ## Demo Video
 
