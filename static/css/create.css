@@ -5,6 +5,16 @@
     display: flex;
     align-items: center;
 }
+.success-banner {
+    background: #e6ffed;
+    border: 1px solid #2ecc71;
+    color: #1e7e34;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
 
 .upload-container {
     max-width: 800px;
