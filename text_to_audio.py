@@ -1,7 +1,7 @@
 import os
 from openai import OpenAI
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 def text_to_speech_file(text: str, folder: str) -> str:
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -11,7 +11,7 @@ def text_to_speech_file(text: str, folder: str) -> str:
     os.makedirs(save_dir, exist_ok=True)
 
     print(f"[TTS] Saving audio to: {save_file_path}")
-
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))      
     audio = client.audio.speech.create(
         model="gpt-4o-mini-tts",
         voice="alloy",
@@ -23,3 +23,4 @@ def text_to_speech_file(text: str, folder: str) -> str:
 
     print(f"[TTS] ✅ Audio saved")
     return save_file_path
+
