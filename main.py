@@ -86,6 +86,15 @@ def gallery():
 
 # -------------------------
 if __name__ == "__main__":
+    import os, threading
+    from generate_process import run_worker_loop
+
+    threading.Thread(target=run_worker_loop, daemon=True).start()
+
     port = int(os.getenv("PORT", 9000))
     app.run(host="0.0.0.0", port=port)
+
+    port = int(os.getenv("PORT", 9000))
+    app.run(host="0.0.0.0", port=port)
+
 
