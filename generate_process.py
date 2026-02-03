@@ -127,6 +127,7 @@ def run_worker_loop():
                 continue
 
             print("[QUEUE]", folder)
+            print("FOLDER FILES:", os.listdir(os.path.join(uploads, folder)))
 
             try:
                 if not text_to_audio(folder):
@@ -142,4 +143,5 @@ def run_worker_loop():
                 print("[WORKER ERROR]", e)
 
         time.sleep(4)
+
 
