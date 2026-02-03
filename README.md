@@ -1,4 +1,4 @@
-# VidSnapAi- AI Powered Reels Generator
+# VidSnapAI- AI Powered Reels Generator
 I'm super excited to share VidSnapAi, my first Python-based project, where I built a smart reel-making automation tool. It transforms uploaded images and text into captivating video reels using Python, Flask, and FFmpeg — and it’s fully automated!
 
 ## Key Features:
