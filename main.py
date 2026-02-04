@@ -124,7 +124,7 @@ def gallery():
 
 
 import threading
-from generate import run_worker_loop
+from generate_process import run_worker_loop
 
 worker_started = False
 
@@ -135,6 +135,7 @@ def start_worker():
         print("=== STARTING BACKGROUND WORKER ===")
         threading.Thread(target=run_worker_loop, daemon=True).start()
         worker_started = True
+
 
 
 
