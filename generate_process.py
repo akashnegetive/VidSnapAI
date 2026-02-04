@@ -114,45 +114,55 @@ def create_reel(folder):
 # -----------------------------
 def run_worker_loop():
 
-   while True:
-        base = os.path.dirname(os.path.abspath(__file__))
-        done_file = os.path.join(base,"done.txt")
-        uploads = os.path.join(base,"user_uploads")
+    print("=== WORKER LOOP STARTED ===")
 
-        if not os.path.exists(uploads):
-           os.makedirs(uploads, exist_ok=True)
-            
+    while True:
 
-        if not os.path.exists(done_file):
-            open(done_file,"a").close()
+        if not os.path.exists(UPLOADS_DIR):
+            os.makedirs(UPLOADS_DIR, exist_ok=True)
 
-        done = set(open(done_file).read().split())
+        if not os.path.exists(DONE_FILE):
+            open(DONE_FILE, "a").close()
 
-        print("WORKER SCAN:", os.listdir(uploads))
+        done = set(open(DONE_FILE).read().split())
+
+        folders = os.listdir(UPLOADS_DIR)
+
+        print("WORKER SCAN:", folders)
         print("DONE LIST:", done)
-        
 
-        for folder in os.listdir(uploads):
+        for folder in folders:
 
             if folder.startswith("."):
                 continue
+
+            folder_path = os.path.join(UPLOADS_DIR, folder)
+
+            if not os.path.isdir(folder_path):
+                continue
+
             if folder in done:
                 continue
 
+            print("=== PROCESSING JOB:", folder)
+
             try:
                 if not text_to_audio(folder):
+                    print("TTS failed — skip")
                     continue
 
-                #normalize_images(folder)
                 create_reel(folder)
 
-                with open(done_file,"a") as f:
-                    f.write(folder+"\n")
+                with open(DONE_FILE, "a") as f:
+                    f.write(folder + "\n")
+
+                print("=== JOB DONE:", folder)
 
             except Exception as e:
                 print("[WORKER ERROR]", e)
 
-        time.sleep(4)
+        time.sleep(5)
+
 
 
 
