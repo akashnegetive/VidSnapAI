@@ -123,14 +123,16 @@ def gallery():
 #     app.run(host="0.0.0.0", port=port)
 
 
+
 import threading
-from generate import run_worker_loop
+from generate_process import run_worker_loop
 
 # start worker once per process
 if os.environ.get("WORKER_STARTED") != "1":
     os.environ["WORKER_STARTED"] = "1"
     print("=== STARTING BACKGROUND WORKER ===")
     threading.Thread(target=run_worker_loop, daemon=True).start()
+
 
 
 
