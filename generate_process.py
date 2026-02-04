@@ -6,21 +6,9 @@ from text_to_audio import text_to_speech_file
 
 Image.MAX_IMAGE_PIXELS = 20000000
 
-# -----------------------------
-# IMAGE NORMALIZATION
-# -----------------------------
-# def normalize_images(folder):
-#     base = os.path.dirname(os.path.abspath(__file__))
-#     path = os.path.join(base, "user_uploads", folder)
-
-#     for name in os.listdir(path):
-#         if name.lower().endswith((".jpg",".jpeg",".png")):
-#             full = os.path.join(path, name)
-#             try:
-#                 Image.open(full).convert("RGB").save(full, "JPEG")
-#                 print("[IMG] normalized", name)
-#             except Exception as e:
-#                 print("[IMG] skip", name, e)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOADS_DIR = os.path.join(BASE_DIR, "user_uploads")
+DONE_FILE = os.path.join(BASE_DIR, "done.txt")
 
 
 # -----------------------------
@@ -28,11 +16,9 @@ Image.MAX_IMAGE_PIXELS = 20000000
 # -----------------------------
 def text_to_audio(folder):
 
-    base = os.path.dirname(os.path.abspath(__file__))
-    desc = os.path.join(base,"user_uploads",folder,"desc.txt")
-    audio = os.path.join(base,"user_uploads",folder,"audio.mp3")
+    desc = os.path.join(UPLOADS_DIR, folder, "desc.txt")
+    audio = os.path.join(UPLOADS_DIR, folder, "audio.mp3")
 
-    # ✅ skip if audio already exists
     if os.path.exists(audio) and os.path.getsize(audio) > 1000:
         print("[TTS] audio already exists — skip")
         return True
@@ -41,16 +27,18 @@ def text_to_audio(folder):
         print("[TTS] desc missing")
         return False
 
-    text = open(desc,"r",encoding="utf-8").read().strip()
+    text = open(desc, "r", encoding="utf-8").read().strip()
     if not text:
         print("[TTS] empty text")
         return False
 
-    text_to_speech_file(text, folder)
+    try:
+        text_to_speech_file(text, folder)
+    except Exception as e:
+        print("[TTS ERROR]", e)
+        return False
 
-    # ⭐ WAIT FOR AUDIO WRITE (race fix)
-    audio = os.path.join(base,"user_uploads",folder,"audio.mp3")
-
+    # wait for file write
     for _ in range(20):
         if os.path.exists(audio) and os.path.getsize(audio) > 1000:
             print("[TTS] audio ready")
@@ -66,11 +54,9 @@ def text_to_audio(folder):
 # -----------------------------
 def create_reel(folder):
 
-    base = os.path.dirname(os.path.abspath(__file__))
-
-    input_txt = os.path.join(base,"user_uploads",folder,"input.txt")
-    audio = os.path.join(base,"user_uploads",folder,"audio.mp3")
-    output = os.path.join(base,"static","reels",f"{folder}.mp4")
+    input_txt = os.path.join(UPLOADS_DIR, folder, "input.txt")
+    audio = os.path.join(UPLOADS_DIR, folder, "audio.mp3")
+    output = os.path.join(BASE_DIR, "static", "reels", f"{folder}.mp4")
 
     os.makedirs(os.path.dirname(output), exist_ok=True)
 
@@ -81,18 +67,19 @@ def create_reel(folder):
     cmd = [
         "ffmpeg",
         "-y",
-        "-err_detect","ignore_err",
-        "-f","concat","-safe","0",
+        "-loglevel", "error",   # ✅ remove warning spam
+        "-f", "concat",
+        "-safe", "0",
         "-i", input_txt,
         "-i", audio,
         "-vf",
         "scale=1080:1920:force_original_aspect_ratio=decrease,"
         "pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black,"
         "format=yuv420p",
-        "-c:v","libx264",
-        "-c:a","aac",
+        "-c:v", "libx264",
+        "-c:a", "aac",
         "-shortest",
-        "-r","30",
+        "-r", "30",
         output
     ]
 
@@ -100,55 +87,49 @@ def create_reel(folder):
 
     r = subprocess.run(cmd, capture_output=True, text=True)
 
-    print("[FFMPEG STDERR]\n", r.stderr)
-
     if r.returncode != 0:
-        print("[REEL] ffmpeg failed")
+        print("[FFMPEG ERROR]", r.stderr)
         return
 
     print("[REEL] created", output)
 
 
 # -----------------------------
-# WORKER LOOP (THREAD MODE)
+# WORKER LOOP
 # -----------------------------
 def run_worker_loop():
 
     print("=== WORKER LOOP STARTED ===")
 
     while True:
+        try:
 
-        if not os.path.exists(UPLOADS_DIR):
             os.makedirs(UPLOADS_DIR, exist_ok=True)
 
-        if not os.path.exists(DONE_FILE):
-            open(DONE_FILE, "a").close()
+            if not os.path.exists(DONE_FILE):
+                open(DONE_FILE, "a").close()
 
-        done = set(open(DONE_FILE).read().split())
+            done = set(open(DONE_FILE).read().split())
+            folders = os.listdir(UPLOADS_DIR)
 
-        folders = os.listdir(UPLOADS_DIR)
+            print("WORKER SCAN:", folders)
 
-        print("WORKER SCAN:", folders)
-        print("DONE LIST:", done)
+            for folder in folders:
 
-        for folder in folders:
+                if folder.startswith("."):
+                    continue
 
-            if folder.startswith("."):
-                continue
+                folder_path = os.path.join(UPLOADS_DIR, folder)
 
-            folder_path = os.path.join(UPLOADS_DIR, folder)
+                if not os.path.isdir(folder_path):
+                    continue
 
-            if not os.path.isdir(folder_path):
-                continue
+                if folder in done:
+                    continue
 
-            if folder in done:
-                continue
+                print("=== PROCESSING:", folder)
 
-            print("=== PROCESSING JOB:", folder)
-
-            try:
                 if not text_to_audio(folder):
-                    print("TTS failed — skip")
                     continue
 
                 create_reel(folder)
@@ -156,24 +137,9 @@ def run_worker_loop():
                 with open(DONE_FILE, "a") as f:
                     f.write(folder + "\n")
 
-                print("=== JOB DONE:", folder)
+                print("=== DONE:", folder)
 
-            except Exception as e:
-                print("[WORKER ERROR]", e)
+        except Exception as e:
+            print("[WORKER LOOP ERROR]", e)
 
         time.sleep(5)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
