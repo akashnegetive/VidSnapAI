@@ -46,7 +46,8 @@ def create():
 
     if request.method == "POST":
 
-        rec_id = request.form.get("uuid")
+        rec_id = str(uuid.uuid4())
+        print("[CREATE] NEW JOB:", rec_id)
         desc = request.form.get("text")
 
         upload_path = os.path.join(app.config['UPLOAD_FOLDER'], rec_id)
@@ -98,6 +99,7 @@ if __name__ == "__main__":
 
     port = int(os.getenv("PORT", 9000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
