@@ -111,19 +111,14 @@ def gallery():
 #     port = int(os.getenv("PORT", 9000))
 #     app.run(host="0.0.0.0", port=port)
 
-if os.environ.get("RUN_MAIN") != "true":
-    import threading
-    from generate_process import run_worker_loop
-    threading.Thread(target=run_worker_loop, daemon=True).start()
-
-
-
-# ✅ START WORKER FOR GUNICORN ALSO
 import threading
 from generate_process import run_worker_loop
 
-print("=== STARTING BACKGROUND WORKER ===")
-threading.Thread(target=run_worker_loop, daemon=True).start()
+if os.environ.get("WORKER_STARTED") != "1":
+    os.environ["WORKER_STARTED"] = "1"
+    print("=== STARTING BACKGROUND WORKER ===")
+    threading.Thread(target=run_worker_loop, daemon=True).start()
+
 
 
 
