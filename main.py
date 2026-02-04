@@ -78,11 +78,15 @@ def create():
 # -------------------------
 @app.route("/gallery")
 def gallery():
-    reels_path = "static/reels"
-    os.makedirs(reels_path, exist_ok=True)
-
-    reels = os.listdir(reels_path)
-    return render_template("gallery.html", reels=reels)
+    try:
+        reels_path = "static/reels"
+        os.makedirs(reels_path, exist_ok=True)
+    
+        reels = os.listdir(reels_path)
+        return render_template("gallery.html", reels=reels)
+    except Exception as e:
+        print("[GALLERY ERROR]", e)
+        return "Gallery temp error", 500
 
 
 # -------------------------
@@ -94,6 +98,7 @@ if __name__ == "__main__":
 
     port = int(os.getenv("PORT", 9000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
