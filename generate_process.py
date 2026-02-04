@@ -113,6 +113,8 @@ def create_reel(folder):
 # WORKER LOOP (THREAD MODE)
 # -----------------------------
 def run_worker_loop():
+
+   while True:
         base = os.path.dirname(os.path.abspath(__file__))
         done_file = os.path.join(base,"done.txt")
         uploads = os.path.join(base,"user_uploads")
