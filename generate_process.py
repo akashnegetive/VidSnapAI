@@ -112,7 +112,7 @@ def run_worker_loop():
             done = set(open(DONE_FILE).read().split())
             folders = os.listdir(UPLOADS_DIR)
 
-            print("WORKER SCAN:", folders)
+            print("WORKER SCAN FULL:", UPLOADS_DIR, folders)
 
             for folder in folders:
 
@@ -143,3 +143,4 @@ def run_worker_loop():
             print("[WORKER LOOP ERROR]", e)
 
         time.sleep(5)
+
