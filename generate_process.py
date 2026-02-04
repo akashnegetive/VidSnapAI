@@ -80,7 +80,6 @@ def create_reel(folder):
 
     cmd = [
         "ffmpeg",
-        "-loglevel", "error",
         "-y",
         "-err_detect","ignore_err",
         "-f","concat","-safe","0",
@@ -89,7 +88,7 @@ def create_reel(folder):
         "-vf",
         "scale=1080:1920:force_original_aspect_ratio=decrease,"
         "pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black,"
-        "format=yuv420p,setsar=1",
+        "format=yuv420p",
         "-c:v","libx264",
         "-c:a","aac",
         "-shortest",
@@ -149,6 +148,7 @@ def run_worker_loop():
                 print("[WORKER ERROR]", e)
 
         time.sleep(4)
+
 
 
 
