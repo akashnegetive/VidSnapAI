@@ -1,3 +1,5 @@
+print("=== MAIN.PY VERSION 7 ===")
+
 from flask import Flask, render_template, request
 import uuid
 from werkzeug.utils import secure_filename
@@ -103,6 +105,7 @@ if __name__ == "__main__":
 
     port = int(os.getenv("PORT", 9000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
