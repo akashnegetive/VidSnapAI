@@ -119,10 +119,17 @@ def run_worker_loop():
         done_file = os.path.join(base,"done.txt")
         uploads = os.path.join(base,"user_uploads")
 
+        if not os.path.exists(uploads):
+           os.makedirs(uploads, exist_ok=True)
+            
+
         if not os.path.exists(done_file):
             open(done_file,"a").close()
 
         done = set(open(done_file).read().split())
+
+        print("WORKER SCAN:", os.listdir(uploads))
+        print("DONE LIST:", done)
         
 
         for folder in os.listdir(uploads):
@@ -147,6 +154,7 @@ def run_worker_loop():
                 print("[WORKER ERROR]", e)
 
         time.sleep(4)
+
 
 
 
