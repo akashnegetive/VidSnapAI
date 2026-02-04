@@ -43,9 +43,9 @@ def home():
 def create():
     myid = uuid.uuid1()
     created = False   # ⭐ flag
-
+    print("[CREATE] method =", request.method)
     if request.method == "POST":
-        print("[CREATE] method =", request.method)
+        
         rec_id = str(uuid.uuid4())
         print("[CREATE] NEW JOB:", rec_id)
         desc = request.form.get("text")
@@ -103,6 +103,7 @@ if __name__ == "__main__":
 
     port = int(os.getenv("PORT", 9000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
