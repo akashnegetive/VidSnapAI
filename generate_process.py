@@ -130,8 +130,8 @@ def run_worker_loop():
 
         for folder in os.listdir(uploads):
 
-            # if folder in done:
-            #     continue
+            if folder in done:
+                continue
 
             print("[QUEUE]", folder)
             print("FOLDER FILES:", os.listdir(os.path.join(uploads, folder)))
@@ -150,6 +150,7 @@ def run_worker_loop():
                 print("[WORKER ERROR]", e)
 
         time.sleep(4)
+
 
 
 
