@@ -124,17 +124,15 @@ def gallery():
 
 
 import threading
-from generate_process import run_worker_loop
+from generate import run_worker_loop
 
-worker_started = False
+# start worker once per process
+if os.environ.get("WORKER_STARTED") != "1":
+    os.environ["WORKER_STARTED"] = "1"
+    print("=== STARTING BACKGROUND WORKER ===")
+    threading.Thread(target=run_worker_loop, daemon=True).start()
 
-@app.before_first_request
-def start_worker():
-    global worker_started
-    if not worker_started:
-        print("=== STARTING BACKGROUND WORKER ===")
-        threading.Thread(target=run_worker_loop, daemon=True).start()
-        worker_started = True
+
 
 
 
