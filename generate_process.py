@@ -113,13 +113,14 @@ def run_worker_loop():
             folders = os.listdir(UPLOADS_DIR)
 
             print("WORKER SCAN FULL:", UPLOADS_DIR, folders)
-
+            print("DONE LIST:", done)
+            
             for folder in folders:
 
                 if folder.startswith("."):
                     continue
 
-                folder_path = os.path.join(UPLOADS_DIR, folder)
+                folders = [f.name for f in os.scandir(UPLOADS_DIR)]
 
                 if not os.path.isdir(folder_path):
                     continue
@@ -143,4 +144,5 @@ def run_worker_loop():
             print("[WORKER LOOP ERROR]", e)
 
         time.sleep(5)
+
 
