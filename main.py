@@ -114,7 +114,7 @@ def gallery():
 # -------------------------
 if __name__ == "__main__":
     import threading
-    from generate import run_worker_loop   # ← match filename
+    from generate_process import run_worker_loop   
 
     print("=== STARTING BACKGROUND WORKER ===")
     threading.Thread(target=run_worker_loop, daemon=True).start()
@@ -133,6 +133,7 @@ if __name__ == "__main__":
 #         threading.Thread(target=run_worker_loop, daemon=True).start()
 
 # start_worker_once()
+
 
 
 
