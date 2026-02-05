@@ -97,9 +97,9 @@ def create_reel(folder):
 # -----------------------------
 # WORKER LOOP
 # -----------------------------
-def run_worker_loop():
+# def run_worker_loop():
 
-    print("=== WORKER LOOP STARTED ===")
+#     print("=== WORKER LOOP STARTED ===")
 
     while True:
         try:
@@ -139,6 +139,7 @@ def run_worker_loop():
             print("[WORKER LOOP ERROR]", e)
 
         time.sleep(5)
+
 
 
 
