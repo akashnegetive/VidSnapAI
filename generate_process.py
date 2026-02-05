@@ -97,23 +97,25 @@ def create_reel(folder):
     os.makedirs(os.path.dirname(output), exist_ok=True)
 
     cmd = [
-        "ffmpeg",
-        "-y",
-        "-loglevel", "error",
-        "-f", "concat",
-        "-safe", "0",
-        "-i", input_txt,
-        "-i", audio,
-        "-vf",
-        "scale=1080:1920:force_original_aspect_ratio=decrease,"
-        "pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black,"
-        "format=yuv420p",
-        "-c:v", "libx264",
-        "-c:a", "aac",
-        "-shortest",
-        "-r", "30",
-        output
+    "ffmpeg",
+    "-y",
+    "-loglevel", "error",
+    "-f", "concat",
+    "-safe", "0",
+    "-i", input_txt,
+    "-i", audio,
+    "-vf",
+    "scale=720:1280:force_original_aspect_ratio=decrease,"
+    "pad=720:1280:(ow-iw)/2:(oh-ih)/2:black,"
+    "format=yuv420p",
+    "-preset", "ultrafast",   # ⭐ KEY FIX
+    "-crf", "28",             # ⭐ KEY FIX
+    "-c:v", "libx264",
+    "-c:a", "aac",
+    "-shortest",
+    output
     ]
+
 
     print("[REEL] running ffmpeg...")
     print("[REEL CMD]", " ".join(cmd))
@@ -187,9 +189,11 @@ def run_worker_loop():
                     print(">>> TTS failed — will retry later")
                     continue
 
-                if create_reel(folder):
-                    with open(DONE_FILE, "a") as f:
-                        f.write(folder + "\n")
+               
+                with open(DONE_FILE, "a") as f:
+                    f.write(folder + "\n")
+
+                create_reel(folder):
 
                 print(">>> JOB COMPLETED:", folder)
 
@@ -197,6 +201,7 @@ def run_worker_loop():
             print("[WORKER LOOP ERROR]", e)
 
         time.sleep(5)
+
 
 
 
