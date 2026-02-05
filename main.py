@@ -75,7 +75,7 @@ def create():
                 input_files.append(filename)
 
         print("[CREATE] saved files:", input_files)
-        
+        print("[CREATE] writing desc + input files")
         sys.stdout.flush()
         os.sync()
 
@@ -132,6 +132,7 @@ if os.environ.get("WORKER_STARTED") != "1":
     os.environ["WORKER_STARTED"] = "1"
     print("=== STARTING BACKGROUND WORKER ===")
     threading.Thread(target=run_worker_loop, daemon=True).start()
+
 
 
 
