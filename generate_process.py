@@ -76,27 +76,29 @@ def text_to_audio(folder):
 # -----------------------------
 def create_reel(folder):
 
+    print("[REEL] start for folder:", folder)
+
     input_txt = os.path.join(UPLOADS_DIR, folder, "input.txt")
     audio = os.path.join(UPLOADS_DIR, folder, "audio.mp3")
     output = os.path.join(BASE_DIR, "static", "reels", f"{folder}.mp4")
-    
-    print("\n[REEL] start for folder:", folder)
+
     print("[REEL] input_txt exists:", os.path.exists(input_txt))
     print("[REEL] audio exists:", os.path.exists(audio))
 
-
-    os.makedirs(os.path.dirname(output), exist_ok=True)
+    if not os.path.exists(input_txt):
+        print("[REEL] input.txt missing")
+        return
 
     if not os.path.exists(audio):
         print("[REEL] audio missing")
         return
-    
-    print("[REEL] running ffmpeg command:", " ".join(cmd))
+
+    os.makedirs(os.path.dirname(output), exist_ok=True)
 
     cmd = [
         "ffmpeg",
         "-y",
-        "-loglevel", "error",   # ✅ remove warning spam
+        "-loglevel", "error",
         "-f", "concat",
         "-safe", "0",
         "-i", input_txt,
@@ -112,7 +114,7 @@ def create_reel(folder):
         output
     ]
 
-    print("[REEL] ffmpeg start")
+    print("[REEL] running ffmpeg...")
 
     r = subprocess.run(cmd, capture_output=True, text=True)
 
@@ -120,7 +122,8 @@ def create_reel(folder):
         print("[FFMPEG ERROR]", r.stderr)
         return
 
-    print("[REEL] created", output)
+    print("[REEL] created:", output)
+
 
 
 # -----------------------------
@@ -181,6 +184,7 @@ def run_worker_loop():
             print("[WORKER LOOP ERROR]", e)
 
         time.sleep(5)
+
 
 
 
